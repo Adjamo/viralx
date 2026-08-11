@@ -151,15 +151,14 @@ HIGHEST-PRIORITY CONTROLS
 Before running the system continuously on mainnet:
 
 1. Protect the signing key.
-2. Keep the hot-wallet balance deliberately small.
-3. Prevent duplicate and replayed rewards.
-4. Require cryptographic wallet ownership verification.
-5. Maintain durable records of every reward and transaction.
-6. Add transaction limits and an emergency shutdown mechanism.
-7. Monitor AWS costs, wallet balances and transaction failures.
-8. Log enough information to reconstruct exactly why every reward was issued.
-9. Treat external APIs as unreliable and handle failures safely.
-10. Review legal, privacy and platform-policy requirements before public launch.
+2. Prevent duplicate and replayed rewards.
+3. Require cryptographic wallet ownership verification.
+4. Maintain durable records of every reward and transaction.
+5. Add transaction limits and an emergency shutdown mechanism.
+6. Monitor AWS costs, wallet balances and transaction failures.
+7. Log enough information to reconstruct exactly why every reward was issued.
+8. Treat external APIs as unreliable and handle failures safely.
+9. Review legal, privacy and platform-policy requirements before public launch.
 
 OPERATIONAL PRINCIPLE
 
