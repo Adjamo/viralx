@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ViralX — the coin that pays you to make it go viral</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,800;0,900;1,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#fbe9f1;            /* very light pink page bg */
+    --ink-2:#ffffff;          /* cards / panels: clean white */
+    --paper:#1a0a13;          /* near-black ink text */
+    --paper-dim:#8a5f72;      /* muted rose-grey for secondary text */
+    --signal:#ff2e88;
+    --signal-2:#d81f6e;       /* darker pink for hover/legibility on light */
+    --line:rgba(26,10,19,0.12);
+    --mono:'Space Mono',ui-monospace,monospace;
+    --disp:'Archivo',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--disp);
+    line-height:1.5;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ---- top raydium bar ---- */
+  .topbar{
+    display:block;text-decoration:none;text-align:center;
+    background:var(--paper);color:var(--ink);
+    font-family:var(--mono);font-weight:700;font-size:14px;letter-spacing:.02em;
+    padding:12px 16px;
+    transition:background .2s;
+  }
+  .topbar:hover{background:var(--signal-2);color:#fff}
+  .topbar b{color:var(--signal);transition:color .2s}
+  .topbar:hover b{color:#fff}
+  .topbar .arrow{margin-left:6px}
+
+  /* ---- top bar ---- */
+  header{
+    position:sticky;top:0;z-index:20;
+    background:rgba(251,233,241,0.82);
+    backdrop-filter:saturate(140%) blur(10px);
+    -webkit-backdrop-filter:saturate(140%) blur(10px);
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;
+  }
+  .header-inner{
+    max-width:1080px;margin:0 auto;width:100%;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{
+    font-weight:900;letter-spacing:-0.02em;font-size:20px;
+    display:flex;align-items:center;gap:9px;
+  }
+  .brand b{color:var(--signal)}
+  .dot{
+    width:10px;height:10px;border-radius:50%;background:var(--signal);
+    box-shadow:0 0 0 0 var(--signal);
+    animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(255,46,136,.6)}
+    70%{box-shadow:0 0 0 14px rgba(255,46,136,0)}
+    100%{box-shadow:0 0 0 0 rgba(255,46,136,0)}
+  }
+  .nav-cta{
+    font-family:var(--mono);font-weight:700;font-size:17px;text-decoration:none;
+    background:var(--signal);color:#fff;
+    border-radius:999px;padding:15px 32px;
+    box-shadow:0 8px 22px -6px rgba(255,46,136,.6);
+    transition:transform .15s,box-shadow .2s;
+  }
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 12px 30px -6px rgba(255,46,136,.75)}
+
+  /* ---- hero ---- */
+  .hero{
+    position:relative;
+    padding:60px 0 90px;
+    overflow:hidden;
+  }
+  /* the strange loop: tagline echoing itself behind the hero */
+  .echo{
+    position:absolute;inset:0;z-index:0;pointer-events:none;
+    display:flex;flex-direction:column;justify-content:center;
+    gap:0;overflow:hidden;opacity:.5;
+    -webkit-mask-image:radial-gradient(120% 90% at 50% 42%, #000 8%, transparent 62%);
+            mask-image:radial-gradient(120% 90% at 50% 42%, #000 8%, transparent 62%);
+  }
+  .echo span{
+    white-space:nowrap;font-family:var(--disp);font-weight:900;
+    font-size:clamp(34px,7vw,84px);letter-spacing:-0.03em;line-height:1.02;
+    color:transparent;-webkit-text-stroke:1px rgba(255,46,136,.28);
+    animation:drift 22s linear infinite;
+  }
+  .echo span:nth-child(even){animation-direction:reverse;opacity:.7}
+  .echo span:nth-child(3n){-webkit-text-stroke-color:rgba(216,31,110,.14)}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-40%)}}
+
+  .hero-inner{position:relative;z-index:2;text-align:center}
+  .eyebrow{
+    font-family:var(--mono);font-size:13px;color:var(--signal-2);
+    letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px;
+  }
+  h1{
+    font-weight:900;letter-spacing:-0.035em;line-height:0.98;
+    font-size:clamp(44px,9vw,104px);
+    margin:0 auto;max-width:14ch;
+  }
+  h1 .loop{
+    color:var(--signal);position:relative;white-space:nowrap;
+  }
+  .sub{
+    font-family:var(--mono);font-size:clamp(14px,1.6vw,17px);
+    color:var(--paper-dim);max-width:52ch;margin:26px auto 0;line-height:1.7;
+  }
+  .cta-row{
+    display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+    margin-top:40px;
+  }
+  .btn{
+    font-family:var(--mono);font-weight:700;font-size:15px;text-decoration:none;
+    padding:15px 28px;border-radius:12px;display:inline-flex;align-items:center;gap:10px;
+    transition:transform .15s,box-shadow .2s,background .2s;
+  }
+  .btn-primary{
+    background:var(--signal);color:#fff;
+    box-shadow:0 10px 30px -8px rgba(255,46,136,.55);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -8px rgba(255,46,136,.7)}
+  .btn-ghost{border:1px solid var(--line);color:var(--paper)}
+  .btn-ghost:hover{border-color:var(--signal-2);color:var(--signal-2)}
+
+  /* big hero tweet button */
+  .btn-tweet{
+    font-family:var(--mono);font-weight:700;
+    font-size:clamp(17px,2.4vw,22px);
+    background:var(--signal);color:#fff;text-decoration:none;
+    padding:20px 40px;border-radius:16px;
+    display:inline-flex;align-items:center;gap:14px;
+    box-shadow:0 14px 40px -10px rgba(255,46,136,.6);
+    transition:transform .15s,box-shadow .2s;
+  }
+  .btn-tweet:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 22px 55px -10px rgba(255,46,136,.75)}
+  .btn-tweet svg{width:22px;height:22px;fill:currentColor}
+  .tweet-wrap{margin-top:42px;display:flex;justify-content:center}
+  .tweet-sub{
+    font-family:var(--mono);font-size:12.5px;color:var(--paper-dim);
+    margin-top:16px;text-align:center;
+  }
+
+  /* trust preview of the exact tweet */
+  .tweet-preview{
+    max-width:520px;margin:22px auto 0;text-align:left;
+    background:var(--ink-2);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px 15px;
+    box-shadow:0 8px 26px -14px rgba(26,10,19,.35);
+  }
+  .tweet-preview .tp-head{
+    display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--paper-dim);margin-bottom:10px;
+  }
+  .tweet-preview .tp-head svg{width:13px;height:13px;fill:var(--signal)}
+  .tweet-preview .tp-body{
+    font-family:var(--disp);font-weight:600;font-size:15px;line-height:1.5;
+    color:var(--paper);
+  }
+  .tweet-preview .tp-link{
+    display:inline-block;margin-top:8px;
+    font-family:var(--mono);font-size:12.5px;color:var(--signal-2);
+    word-break:break-all;
+  }
+
+  /* live ticker under hero */
+  .ticker{
+    position:relative;z-index:2;margin-top:56px;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:16px 0;font-family:var(--mono);font-size:13px;color:var(--paper-dim);
+    display:flex;gap:40px;justify-content:center;flex-wrap:wrap;
+  }
+  .ticker b{color:var(--paper)}
+  .ticker .live{color:var(--signal-2)}
+  .ticker .live::before{content:"● ";font-size:10px;vertical-align:1px}
+
+  /* ---- how it works ---- */
+  section.how{padding:96px 0 40px}
+  .section-head{margin-bottom:44px}
+  .section-head .kicker{
+    font-family:var(--mono);font-size:13px;color:var(--signal-2);
+    letter-spacing:.14em;text-transform:uppercase;
+  }
+  .section-head h2{
+    font-weight:800;font-size:clamp(28px,4vw,44px);letter-spacing:-0.03em;
+    margin-top:12px;max-width:20ch;
+  }
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{
+    background:var(--ink-2);border:1px solid var(--line);border-radius:18px;
+    padding:28px 24px 30px;position:relative;overflow:hidden;
+    transition:border-color .25s,transform .25s;
+  }
+  .card:hover{border-color:rgba(255,46,136,.4);transform:translateY(-3px)}
+  .card .num{
+    font-family:var(--mono);font-size:13px;color:var(--signal);
+    letter-spacing:.1em;
+  }
+  .card h3{font-weight:800;font-size:21px;letter-spacing:-0.02em;margin:16px 0 10px}
+  .card p{font-family:var(--mono);font-size:13.5px;color:var(--paper-dim);line-height:1.7}
+  .card .glyph{
+    position:absolute;top:20px;right:22px;font-family:var(--mono);
+    font-size:15px;color:var(--signal);opacity:.55;
+  }
+
+  /* ---- the loop explainer strip ---- */
+  .loopstrip{
+    margin-top:64px;border:1px solid var(--line);border-radius:20px;
+    background:linear-gradient(180deg,rgba(255,46,136,.06),rgba(255,46,136,0));
+    padding:40px 34px;text-align:center;
+  }
+  .loopstrip .flow{
+    font-family:var(--mono);font-size:clamp(13px,1.7vw,16px);
+    color:var(--paper);display:flex;gap:14px;justify-content:center;
+    align-items:center;flex-wrap:wrap;
+  }
+  .loopstrip .flow span{
+    border:1px solid var(--line);border-radius:999px;padding:8px 16px;
+  }
+  .loopstrip .flow .arrow{border:0;color:var(--signal);padding:0}
+  .loopstrip .note{
+    font-family:var(--mono);font-size:13px;color:var(--paper-dim);margin-top:22px;
+  }
+
+  /* ---- numbers ---- */
+  section.stats{padding:80px 0 20px}
+  .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .stat{
+    border:1px solid var(--line);border-radius:16px;padding:24px 20px;
+    background:var(--ink-2);
+  }
+  .stat .big{font-weight:900;font-size:clamp(24px,3vw,34px);letter-spacing:-0.03em}
+  .stat .lbl{font-family:var(--mono);font-size:12px;color:var(--paper-dim);margin-top:8px;letter-spacing:.04em}
+  .stat.accent .big{color:var(--signal)}
+
+  /* ---- final cta ---- */
+  section.final{padding:100px 0 40px;text-align:center}
+  section.final h2{
+    font-weight:900;letter-spacing:-0.035em;line-height:1.0;
+    font-size:clamp(34px,6vw,68px);max-width:16ch;margin:0 auto;
+  }
+  section.final h2 em{color:var(--signal);font-style:normal}
+  section.final p{
+    font-family:var(--mono);color:var(--paper-dim);font-size:15px;
+    margin:22px auto 0;max-width:44ch;line-height:1.7;
+  }
+
+  footer{
+    margin-top:90px;border-top:1px solid var(--line);
+    padding:34px 0 60px;
+  }
+  .foot-in{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:16px;
+    font-family:var(--mono);font-size:12.5px;color:var(--paper-dim);
+  }
+  .foot-in a{text-decoration:none}
+  .foot-in a:hover{color:var(--signal-2)}
+  .contract{
+    font-family:var(--mono);font-size:11.5px;color:var(--paper-dim);
+    border:1px dashed var(--line);border-radius:8px;padding:7px 12px;
+    word-break:break-all;
+  }
+
+  @media(max-width:820px){
+    .cards{grid-template-columns:1fr}
+    .statgrid{grid-template-columns:repeat(2,1fr)}
+    header{padding:18px 20px}
+    .ticker{gap:22px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .echo span{animation:none}
+    .dot{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<a class="topbar" href="#buy">Now live on <b>Raydium</b> — buy $VIRALX<span class="arrow">→</span></a>
+
+<header>
+  <div class="header-inner">
+    <div class="brand"><span class="dot"></span>viral<b>X</b></div>
+    <a class="nav-cta" href="#buy">Buy on Raydium →</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="echo" aria-hidden="true">
+      <span>the coin that pays you to make it go viral</span>
+      <span>the coin that pays you to make it go viral</span>
+      <span>the coin that pays you to make it go viral</span>
+      <span>the coin that pays you to make it go viral</span>
+      <span>the coin that pays you to make it go viral</span>
+      <span>the coin that pays you to make it go viral</span>
+      <span>the coin that pays you to make it go viral</span>
+    </div>
+
+    <div class="wrap hero-inner">
+      <div class="eyebrow">Solana · live every hour</div>
+      <h1>The coin that pays you to make it <span class="loop">go viral</span>.</h1>
+      <p class="sub">Post a tweet. Get people to click your link. The most clicks each hour wins a million ViralX. That's the whole game.</p>
+      <div class="tweet-wrap">
+        <a class="btn-tweet" id="tweetBtn" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Tweet about ViralX to win!
+        </a>
+      </div>
+
+      <!-- trust preview: shows EXACTLY what will be posted -->
+      <div class="tweet-preview" id="tweetPreview" aria-live="polite">
+        <div class="tp-head">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span>This is exactly what gets tweeted</span>
+        </div>
+        <p class="tp-body" id="tpBody"></p>
+        <span class="tp-link" id="tpLink">https://viralx.fun/r/YOUR_SOL_ADDRESS</span>
+      </div>
+
+      <div class="tweet-sub">Connect your wallet to get your own link · <a href="#how" style="color:var(--signal-2);text-decoration:none">how it works ↓</a></div>
+    </div>
+
+    <div class="wrap">
+      <div class="ticker">
+        <div class="live">Competition Live</div>
+        <div>Next payout in under 1 hour</div>
+        <div>Reward <b>1,000,000 $VIRALX</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="how" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Three moving parts</div>
+        <h2>No presale. No whitelist. Just tweet and win.</h2>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="glyph">01</div>
+          <div class="num">TWEET</div>
+          <h3>Grab your link</h3>
+          <p>Connect your Solana wallet and get your personal link. Post it anywhere with #ViralX and @viralxcoin and a valid Sol address - the funnier the tweet, the more it spreads.</p>
+        </div>
+        <div class="card">
+          <div class="glyph">02</div>
+          <div class="num">SPREAD</div>
+          <h3>Clicks are the score</h3>
+          <p>(Retweets X 10) + (Replies * 3) + Likes = Winner. Higest score wins each HOURLY.</p>
+        </div>
+        <div class="card">
+          <div class="glyph">03</div>
+          <div class="num">WIN</div>
+          <h3>Coins hit your wallet</h3>
+          <p>A script pays the winner automatically, once an hour. Sell them on Raydium, hold them, or reinvest the hype!</p>
+        </div>
+      </div>
+
+      <div class="loopstrip">
+        <div class="flow">
+          <span>you tweet it</span>
+          <span class="arrow">→</span>
+          <span>people like/retweet/reply</span>
+          <span class="arrow">→</span>
+          <span>you win coins</span>
+          <span class="arrow">→</span>
+          <span>you tweet again</span>
+          <span class="arrow">↺</span>
+        </div>
+        <div class="note">If you win, you are locked out of winning for 24 hours — so the win spreads around. The loudest players win the most.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NUMBERS -->
+  <section class="stats">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">The honest numbers</div>
+        <h2>It's on-chain. Here's the whole supply.</h2>
+      </div>
+      <div class="statgrid">
+        <div class="stat accent">
+          <div class="big">1,000,000</div>
+          <div class="lbl">$VIRALX per block</div>
+        </div>
+        <div class="stat">
+          <div class="big">Every 1h</div>
+          <div class="lbl">new winner paid</div>
+        </div>
+        <div class="stat">
+          <div class="big">3B</div>
+          <div class="lbl">total supply, fixed</div>
+        </div>
+        <div class="stat accent">
+          <div class="big">Halving</div>
+          <div class="lbl">rewards for tweets half every 500 wins!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final" id="buy">
+    <div class="wrap">
+      <h2>Make it go viral. <em>Get paid for it.</em></h2>
+      <p>Grab some $VIRALX on Raydium, get your link, and go win the next block. It closes in under an hour.</p>
+      <div class="cta-row" id="play">
+        <a class="btn btn-primary" href="#">Buy on Raydium →</a>
+        <a class="btn btn-ghost" href="#">Get my X link</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>viral<b style="color:var(--signal)">X</b> · a self-propagating experiment on Solana</div>
+    <div class="contract">CA: &lt;paste mint address at launch&gt;</div>
+    <div>
+      <a href="https://x.com/viralxcoin">X / Twitter</a> &nbsp;·&nbsp; <a href="#">Raydium</a> &nbsp;·&nbsp; <a>Play now!</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Your referral link. Swap YOUR_SOL_ADDRESS for the connected wallet at runtime.
+  var LINK = "https://viralx.fun/r/YOUR_SOL_ADDRESS";
+
+  // 20 tweets. {link} is where the URL goes in the preview; the URL itself
+  // is passed to X via the &url= param so it renders as a proper card.
+  var TWEETS = [
+    "I'm making @viralxcoin go viral to win a million coins. Click my link and let's break the bank! 🚀 #ViralX",
+    "@viralxcoin - The coin that pays you to make it go viral. I'm in it for the hourly bag - click my link 👇 #ViralX",
+    "Every like retweet and reply is a vote for me winning a million @viralxcoin this hour. Do your degen duty 😤 #ViralX",
+    "No presale. No whitelist. Just tweet, get clicks, win coins. I'm playing — click my @viralxcoin link 🔥 #ViralX",
+    "Help me win the next @viralxcoin block. Likes retweets and replies count! Zero cost, maximum chaos 🌀 #ViralX",
+    "I get paid when this goes viral, so… make it go viral 😏 click my @viralxcoin link #ViralX 🚀",
+    "Clicks are the score and I'm trying to top the leaderboard. Tap my @viralxcoin link and carry me 🏆 #ViralX",
+    "A million @viralxcoin coins to whoever gets the most clicks this hour. That's me if you click 👇 #ViralX",
+    "This is the only link where clicking it actually helps me win money. @viralxcoin #ViralX 🚀",
+    "Solana's weirdest game: the coin that pays you to make it trend. I'm playing — click 👇 @viralxcoin #ViralX",
+    "Block closes in under an hour. I need clicks. You have a finger. Let's collab 🤝 @viralxcoin #ViralX",
+    "Turn your idle scrolling into my bag — click my @viralxcoin link and make me hourly winner 💸 #ViralX",
+    "Likes don't win. Reach does. Click my @viralxcoin link and let's game the leaderboard 📈 #ViralX",
+    "I'm trying to win a million coins for doing basically nothing. Enable me. Click 👇 @viralxcoin #ViralX",
+    "Every hour a new winner gets paid on @viralxcoin. Click my link and make it me this round 🚀 #ViralX",
+    "It's free, it's dumb, it's on Solana, and clicking my link might make me rich. @viralxcoin #ViralX 😅",
+    "The whole game is clicks. So click. That's it. That's the tweet. @viralxcoin #ViralX 🔥",
+    "Making @viralxcoin go viral one referral at a time. Be my referral, click here 👇 #ViralX 🚀",
+    "Front row seat to a self-propagating coin. Click my @viralxcoin link and let's spread it 🌐 #ViralX",
+    "Hourly payouts, real clicks, no cap on chaos. Click my @viralxcoin link and let's win this block 🏁 #ViralX"
+  ];
+
+  function pick(){ return TWEETS[Math.floor(Math.random()*TWEETS.length)]; }
+
+  function apply(){
+    var text = pick();
+    var href = "https://twitter.com/intent/tweet?text="
+             + encodeURIComponent(text)
+             + "&url=" + encodeURIComponent(LINK);
+
+    var btn = document.getElementById('tweetBtn');
+    if(btn) btn.setAttribute('href', href);
+
+    // preview shows the exact wording + the link, matching what X will post
+    var body = document.getElementById('tpBody');
+    if(body) body.textContent = text;
+    var lk = document.getElementById('tpLink');
+    if(lk) lk.textContent = LINK;
+  }
+
+  apply();
+})();
+</script>
+
+</body>
+</html>
