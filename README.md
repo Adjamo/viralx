@@ -1,0 +1,2 @@
+# viralx
+viralx coin code
