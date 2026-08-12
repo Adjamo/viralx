@@ -1,3 +1,4 @@
+
 import time
 import json
 import os
@@ -9,7 +10,8 @@ import tweepy
 #pip install --no-cache-dir solana==0.34.2 solders==0.21.0 tweepy base58
 #pip3 install --no-cache-dir solana==0.34.2 solders==0.21.0 tweepy base58
 
-# Solana imports
+
+# Solana imports (Stable version 0.34.2 / solders 0.21.0)
 from solana.rpc.api import Client as SolanaClient
 from solders.keypair import Keypair # type: ignore
 from solders.pubkey import Pubkey # type: ignore
@@ -39,7 +41,8 @@ TX_LOG_FILE = "tx_signatures.txt"
 # Constants
 BASE_REWARD = 1_000_000
 HALVING_INTERVAL = 500
-MAX_COOLDOWN_ENTRIES = 48  # 24 hours * 2 winners per hour
+# 24 hours * 1 winner per hour * 2 items logged per winner (Twitter ID + Sol Address) = 48 items max
+MAX_COOLDOWN_ITEMS = 48  
 
 # Regex to find Solana addresses (Base58, 32-44 characters)
 SOL_ADDRESS_REGEX = r"\b[1-9A-HJ-NP-Za-km-z]{32,44}\b"
@@ -88,7 +91,7 @@ def update_payout_count(count):
 def get_winners_log():
     if not os.path.exists(WINNERS_FILE):
         with open(WINNERS_FILE, 'w') as f:
-            json.dump([], f) # Now starts as an empty list
+            json.dump([], f) # Starts as an empty list
         return []
     with open(WINNERS_FILE, 'r') as f:
         return json.load(f)
@@ -118,7 +121,7 @@ def extract_sol_address(text):
     return None
 
 def send_viralx_token(destination_address, amount):
-    print(f"💸 Initiating transfer of {amount} ViralX to {destination_address}...")
+    print(f"💸 Initiating transfer of {amount:,.0f} ViralX to {destination_address}...")
     dest_pubkey = Pubkey.from_string(destination_address)
     
     # Get associated token accounts (ATA)
@@ -184,15 +187,15 @@ def run_hourly_competition():
     for tweet in tweets.data:
         text = tweet.text
         author_id = str(tweet.author_id)
-        
-        # Check 24-hour cooldown using the rolling list
-        if author_id in winners_log:
-            print(f"⏭️ Skipping user {author_id} - they recently won.")
-            continue
                 
         sol_address = extract_sol_address(text)
         if not sol_address:
             print(f"⏭️ Skipping tweet {tweet.id} - no valid Solana address found.")
+            continue
+            
+        # Sybil Check: Check if EITHER the Twitter ID OR the Solana address recently won
+        if author_id in winners_log or sol_address in winners_log:
+            print(f"⏭️ Skipping tweet {tweet.id} - user or wallet recently won.")
             continue
             
         metrics = tweet.public_metrics
@@ -207,7 +210,7 @@ def run_hourly_competition():
         })
 
     if not scored_tweets:
-        print("🤷‍♂️ No eligible tweets with Solana addresses found this hour.")
+        print("🤷‍♂️ No eligible tweets with valid, non-blacklisted Solana addresses found this hour.")
         return
 
     # Sort by Score (Desc), then by Created At (Asc - oldest wins tie)
@@ -246,9 +249,14 @@ def run_hourly_competition():
         
         # Update states and rolling list
         update_payout_count(payout_count + 1)
+        
+        # Add BOTH to the blacklist (Only for 1st Place!)
         winners_log.append(top_tweet['author_id'])
-        if len(winners_log) > MAX_COOLDOWN_ENTRIES:
+        winners_log.append(top_tweet['sol_address'])
+        
+        while len(winners_log) > MAX_COOLDOWN_ITEMS:
             winners_log.pop(0)
+            
         update_winners_log(winners_log)
         
     except Exception as e:
@@ -269,11 +277,7 @@ def run_hourly_competition():
             twitter_client.create_tweet(text=second_place_text, in_reply_to_tweet_id=second_tweet['tweet_id'])
             print(f"✅ Replied to 2nd place tweet {second_tweet['tweet_id']}")
             
-            # Add 2nd place to cooldown log
-            winners_log.append(second_tweet['author_id'])
-            if len(winners_log) > MAX_COOLDOWN_ENTRIES:
-                winners_log.pop(0)
-            update_winners_log(winners_log)
+            # Note: No longer blacklisting 2nd place! They are free to try again.
             
         except Exception as e:
             print(f"❌ Error during 2nd place reply: {e}")
@@ -288,3 +292,4 @@ while True:
     
     print("💤 Sleeping for 1 hour...")
     time.sleep(3600)
+    
